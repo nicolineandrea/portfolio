@@ -121,6 +121,62 @@ document.querySelectorAll('.js-youtube-embed[data-youtube-id]').forEach(preview 
   });
 });
 
+document.querySelectorAll('[data-audio-player]').forEach(player => {
+  const audio = player.querySelector('audio');
+  const toggle = player.querySelector('[data-audio-toggle]');
+  const progress = player.querySelector('[data-audio-progress]');
+  const seek = player.querySelector('[data-audio-seek]');
+  const stepButtons = player.querySelectorAll('[data-audio-step]');
+
+  if (!audio || !toggle || !progress || !seek) {
+    return;
+  }
+
+  const syncAudioProgress = () => {
+    const amount = audio.duration ? audio.currentTime / audio.duration : 0;
+    player.style.setProperty('--audio-progress', amount);
+  };
+
+  toggle.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+
+  stepButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const seconds = Number(button.dataset.audioStep) || 0;
+      audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + seconds));
+    });
+  });
+
+  seek.addEventListener('click', event => {
+    if (!audio.duration) {
+      return;
+    }
+
+    const bounds = seek.getBoundingClientRect();
+    const amount = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    audio.currentTime = amount * audio.duration;
+  });
+
+  audio.addEventListener('play', () => {
+    player.classList.add('is-playing');
+    toggle.setAttribute('aria-label', 'Pause Housing Unit Ritrovamenti audio');
+  });
+
+  audio.addEventListener('pause', () => {
+    player.classList.remove('is-playing');
+    toggle.setAttribute('aria-label', 'Play Housing Unit Ritrovamenti audio');
+  });
+
+  audio.addEventListener('timeupdate', syncAudioProgress);
+  audio.addEventListener('loadedmetadata', syncAudioProgress);
+  audio.addEventListener('ended', syncAudioProgress);
+});
+
 document.querySelectorAll('.artwork-gallery').forEach(gallery => {
   const creditLines = [...gallery.querySelectorAll('.artwork-credit-line')];
 
