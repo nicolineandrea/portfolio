@@ -448,8 +448,14 @@ h1 > .word {
   outline-offset: 3px;
 }
 
+.project-video-preview {
+  width: calc(100% + (var(--project-frame-offset) * 2));
+  margin-left: calc(var(--project-frame-offset) * -1);
+}
+
 .project-section {
   position: relative;
+  --project-frame-offset: clamp(8px, 1.2vw, 14px);
   width: min(100%, 1050px);
   margin-top: clamp(26px, 3.4vw, 48px);
 }
@@ -612,7 +618,7 @@ h1 > .word {
 
 .project-section::after {
   position: absolute;
-  inset: clamp(-14px, -1.2vw, -8px);
+  inset: calc(var(--project-frame-offset) * -1);
   content: "";
   border: 5px solid #111111;
   pointer-events: none;
