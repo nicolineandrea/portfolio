@@ -448,6 +448,10 @@ h1 > .word {
   outline-offset: 3px;
 }
 
+.project-video-preview {
+  margin-top: clamp(12px, 2vw, 24px);
+}
+
 .project-section {
   position: relative;
   --project-frame-offset: clamp(8px, 1.2vw, 14px);
@@ -611,13 +615,15 @@ h1 > .word {
   cursor: pointer;
 }
 
-.project-section::after {
-  position: absolute;
-  display: block;
-  inset: calc(var(--project-frame-offset) * -1);
-  content: "";
-  border: 5px solid #111111;
-  pointer-events: none;
+@media (hover: hover) and (pointer: fine) {
+  .project-section:hover::after {
+    position: absolute;
+    display: block;
+    inset: calc(var(--project-frame-offset) * -1);
+    content: "";
+    border: 5px solid #111111;
+    pointer-events: none;
+  }
 }
 
 .project-title-link {
