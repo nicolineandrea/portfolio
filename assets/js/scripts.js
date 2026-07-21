@@ -160,48 +160,6 @@ document.querySelectorAll('.artwork-gallery').forEach(gallery => {
   });
 });
 
-const projectTitleSelector = '.project-section > h2, .project-section > h3';
-const projectFrameSelector = '.project-section a, .project-section > h2, .project-section > h3';
-
-document.querySelectorAll(projectTitleSelector).forEach(title => {
-  if (!title.querySelector('a')) {
-    title.tabIndex = 0;
-  }
-});
-
-function frameProjectFromTarget(target) {
-  const frameTarget = target instanceof Element
-    ? target.closest(projectFrameSelector)
-    : null;
-  const project = frameTarget?.closest('.project-section');
-
-  if (!project) {
-    return false;
-  }
-
-  project.classList.add('is-project-framed');
-  return true;
-}
-
-document.addEventListener('pointerdown', event => {
-  frameProjectFromTarget(event.target);
-}, { capture: true });
-
-document.addEventListener('keydown', event => {
-  if (event.key !== 'Enter' && event.key !== ' ') {
-    return;
-  }
-
-  if (event.target instanceof Element && event.target.closest('a')) {
-    frameProjectFromTarget(event.target);
-    return;
-  }
-
-  if (frameProjectFromTarget(event.target)) {
-    event.preventDefault();
-  }
-});
-
 document.querySelectorAll('.interactive-title').forEach(title => {
   const words = title.textContent.trim().split(/\s+/);
   const fullTitle = words.join(' ');

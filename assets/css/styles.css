@@ -613,9 +613,7 @@ h1 > .word {
   cursor: pointer;
 }
 
-.project-section.is-project-framed::after,
-.project-section:hover::after,
-.project-section:focus-within::after {
+.project-section::after {
   position: absolute;
   inset: clamp(-14px, -1.2vw, -8px);
   content: "";
