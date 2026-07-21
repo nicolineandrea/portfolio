@@ -216,6 +216,10 @@ document.querySelectorAll('.artwork-gallery').forEach(gallery => {
   });
 });
 
+document.querySelectorAll('.project-section').forEach(project => {
+  project.classList.add('is-project-framed');
+});
+
 document.querySelectorAll('.interactive-title').forEach(title => {
   const words = title.textContent.trim().split(/\s+/);
   const fullTitle = words.join(' ');
