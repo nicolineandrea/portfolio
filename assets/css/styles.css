@@ -681,6 +681,12 @@ h1 > .word {
   outline-offset: 4px;
 }
 
+.project-audio {
+  display: block;
+  width: 100%;
+  margin-top: clamp(12px, 2vw, 24px);
+}
+
 .project-note {
   margin: clamp(20px, 2.5vw, 34px) 0 0;
   font-size: clamp(18px, 1.55vw, 24px);
