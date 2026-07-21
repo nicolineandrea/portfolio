@@ -684,12 +684,11 @@ h1 > .word {
 .project-audio {
   display: block;
   width: 100%;
-  height: 46px;
+  height: 38px;
   margin-top: clamp(12px, 2vw, 24px);
-  border: 5px solid #111111;
-  background: #ffffff;
   color: #111111;
-  filter: grayscale(1) contrast(1.2);
+  font: 900 14px Arial, Helvetica, sans-serif;
+  filter: grayscale(1) contrast(1.1);
 }
 
 .project-note {
