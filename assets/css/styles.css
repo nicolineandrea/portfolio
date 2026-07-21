@@ -448,11 +448,6 @@ h1 > .word {
   outline-offset: 3px;
 }
 
-.project-video-preview {
-  width: calc(100% + (var(--project-frame-offset) * 2));
-  margin-left: calc(var(--project-frame-offset) * -1);
-}
-
 .project-section {
   position: relative;
   --project-frame-offset: clamp(8px, 1.2vw, 14px);
