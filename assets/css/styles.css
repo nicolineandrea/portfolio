@@ -384,7 +384,8 @@ h1 > .word {
 }
 
 
-.video-link {
+.video-link,
+.video-embed {
   width: 100%;
   margin-top: clamp(26px, 3.4vw, 48px);
   aspect-ratio: 16 / 9;
@@ -438,17 +439,13 @@ h1 > .word {
 
 .video-link:hover .video-play,
 .video-link:focus-visible .video-play {
-  color: #0000ff;
+  color: #111111;
   transform: translate(-50%, -50%) scale(1.04);
 }
 
 .video-link:focus-visible {
   outline: 1px dotted currentColor;
   outline-offset: 3px;
-}
-
-.project-video-preview {
-  max-width: min(100%, 760px);
 }
 
 .project-section {
