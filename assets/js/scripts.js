@@ -785,7 +785,7 @@ if (micToggle) {
   });
 }
 
-const drawingCanvas = document.querySelector('.about-drawing');
+const drawingCanvas = document.querySelector('.drawing-canvas, .about-drawing');
 
 const musicCopy = document.querySelector('.music-page .subpage-copy');
 
@@ -839,10 +839,14 @@ document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
   });
 });
 
-if (drawingCanvas) {
+{
   const aboutCopyElement = document.querySelector('.about-copy');
 
   function wrapAboutCopyWords() {
+    if (!aboutCopyElement) {
+      return;
+    }
+
     aboutCopyElement.querySelectorAll('p').forEach(paragraph => {
       const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
       const textNodes = [];
@@ -876,7 +880,7 @@ if (drawingCanvas) {
 
   wrapAboutCopyWords();
 
-  document.querySelector('.about-copy').addEventListener('pointerover', event => {
+  aboutCopyElement?.addEventListener('pointerover', event => {
     if (event.target instanceof Element && event.target.matches('.keyword')) {
       event.target.classList.add('is-discovered');
     }
@@ -886,7 +890,7 @@ if (drawingCanvas) {
     }
   });
 
-  document.querySelector('.about-copy').addEventListener('focusin', event => {
+  aboutCopyElement?.addEventListener('focusin', event => {
     if (event.target instanceof Element && event.target.matches('.keyword')) {
       event.target.classList.add('is-discovered');
     }
@@ -933,7 +937,7 @@ if (drawingCanvas) {
   let selectedFunfacts = [];
   let funfactIndex = 0;
 
-  if (aboutMeTrigger && funfactsSection) {
+  if (aboutMeTrigger && funfactsSection && funfactsSlide) {
     const chooseFunfacts = () => {
       const shuffledFacts = [...allFunfacts];
 
@@ -1016,12 +1020,16 @@ if (drawingCanvas) {
       }, 100);
     });
   }
+}
 
+if (drawingCanvas) {
   const drawingContext = drawingCanvas.getContext('2d');
   const drawingClear = document.querySelector('.drawing-clear');
-  const aboutPage = document.querySelector('.about-page');
-  const aboutContent = document.querySelector('.subpage');
-  const aboutCopy = document.querySelector('.about-copy');
+  const drawingPage = document.body;
+  const drawingContent = document.querySelector('.subpage');
+  const protectedDrawingElements = Array.from(document.querySelectorAll(
+    '.interactive-title, .drawing-playground, .about-copy, .funfacts-section, .subpage-back'
+  ));
   const strokes = [];
 
   let activePointer = null;
@@ -1034,18 +1042,22 @@ if (drawingCanvas) {
 
   function syncDrawingClear() {
     const hasDrawing = strokes.some(stroke => stroke.length > 1);
-    drawingClear.disabled = !hasDrawing;
-    drawingClear.hidden = !hasDrawing;
+    if (drawingClear) {
+      drawingClear.disabled = !hasDrawing;
+      drawingClear.hidden = !hasDrawing;
+    }
   }
 
   function configureDrawingContext() {
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pageStyles = getComputedStyle(drawingPage);
     drawingContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     drawingContext.lineWidth = 5;
     drawingContext.lineCap = 'round';
     drawingContext.lineJoin = 'round';
-    drawingContext.strokeStyle = getComputedStyle(aboutPage)
-      .getPropertyValue('--about-accent').trim() || '#ff34b3';
+    drawingContext.strokeStyle = pageStyles.getPropertyValue('--page-accent').trim()
+      || pageStyles.getPropertyValue('--about-accent').trim()
+      || '#ff34b3';
   }
 
   function renderDrawing() {
@@ -1079,33 +1091,33 @@ if (drawingCanvas) {
     activeStroke = null;
     pendingStartPoint = null;
     strokeStarted = false;
-    aboutPage.classList.remove('is-drawing');
+    drawingPage.classList.remove('is-drawing');
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     drawingContext.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
     syncDrawingClear();
   }
 
-  function measureFunfactsRect() {
-    if (!funfactsSection) {
+  function measureElementRect(element) {
+    if (!element) {
       return null;
     }
 
-    if (!funfactsSection.hidden) {
-      return funfactsSection.getBoundingClientRect();
+    if (!element.hidden) {
+      return element.getBoundingClientRect();
     }
 
-    const previousVisibility = funfactsSection.style.visibility;
-    const previousPointerEvents = funfactsSection.style.pointerEvents;
+    const previousVisibility = element.style.visibility;
+    const previousPointerEvents = element.style.pointerEvents;
 
-    funfactsSection.hidden = false;
-    funfactsSection.style.visibility = 'hidden';
-    funfactsSection.style.pointerEvents = 'none';
+    element.hidden = false;
+    element.style.visibility = 'hidden';
+    element.style.pointerEvents = 'none';
 
-    const rect = funfactsSection.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
 
-    funfactsSection.hidden = true;
-    funfactsSection.style.visibility = previousVisibility;
-    funfactsSection.style.pointerEvents = previousPointerEvents;
+    element.hidden = true;
+    element.style.visibility = previousVisibility;
+    element.style.pointerEvents = previousPointerEvents;
 
     return rect.width && rect.height ? rect : null;
   }
@@ -1116,9 +1128,7 @@ if (drawingCanvas) {
     const stroke = [];
     const segmentCount = 6 + Math.floor(Math.random() * 4);
     const margin = Math.min(canvasWidth, canvasHeight) * 0.08;
-    const copyRect = aboutCopy?.getBoundingClientRect();
-    const funfactsRect = measureFunfactsRect();
-    const forbiddenAreas = [copyRect, funfactsRect].filter(Boolean).map(rect => ({
+    const forbiddenAreas = protectedDrawingElements.map(measureElementRect).filter(Boolean).map(rect => ({
       left: rect.left + window.scrollX - 34,
       top: rect.top + window.scrollY - 30,
       right: rect.right + window.scrollX + 34,
@@ -1395,12 +1405,12 @@ if (drawingCanvas) {
     activeStroke = null;
     pendingStartPoint = null;
     strokeStarted = false;
-    aboutPage.classList.remove('is-drawing');
+    drawingPage.classList.remove('is-drawing');
     syncDrawingClear();
     renderDrawing();
   }
 
-  drawingClear.addEventListener('click', () => {
+  drawingClear?.addEventListener('click', () => {
     resetDrawing();
   });
 
@@ -1432,7 +1442,7 @@ if (drawingCanvas) {
     }
 
     event.preventDefault();
-    aboutPage.classList.add('is-drawing');
+    drawingPage.classList.add('is-drawing');
 
     if (!strokeStarted) {
       activeStroke.push(pendingStartPoint);
@@ -1453,8 +1463,8 @@ if (drawingCanvas) {
     }
   });
 
-  if ('ResizeObserver' in window && aboutContent) {
-    new ResizeObserver(scheduleCanvasResize).observe(aboutContent);
+  if ('ResizeObserver' in window && drawingContent) {
+    new ResizeObserver(scheduleCanvasResize).observe(drawingContent);
   }
 
   document.fonts?.ready.then(scheduleCanvasResize);
