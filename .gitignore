@@ -1,5 +1,9 @@
 assets/raw-video/
 archive/legacy-pages/
+.venv/
+tmp/
+__pycache__/
+*.py[cod]
 .agents/
 .codex/
 desktop.ini

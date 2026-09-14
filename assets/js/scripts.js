@@ -132,6 +132,9 @@ document.querySelectorAll('[data-audio-player]').forEach(player => {
     return;
   }
 
+  const playLabel = toggle.getAttribute('aria-label') || 'Play audio';
+  const pauseLabel = playLabel.replace(/^Play\b/, 'Pause');
+
   const syncAudioProgress = () => {
     const amount = audio.duration ? audio.currentTime / audio.duration : 0;
     player.style.setProperty('--audio-progress', amount);
@@ -164,12 +167,12 @@ document.querySelectorAll('[data-audio-player]').forEach(player => {
 
   audio.addEventListener('play', () => {
     player.classList.add('is-playing');
-    toggle.setAttribute('aria-label', 'Pause Housing Unit Ritrovamenti audio');
+    toggle.setAttribute('aria-label', pauseLabel);
   });
 
   audio.addEventListener('pause', () => {
     player.classList.remove('is-playing');
-    toggle.setAttribute('aria-label', 'Play Housing Unit Ritrovamenti audio');
+    toggle.setAttribute('aria-label', playLabel);
   });
 
   audio.addEventListener('timeupdate', syncAudioProgress);
@@ -1024,10 +1027,12 @@ document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
 
 if (drawingCanvas) {
   const drawingContext = drawingCanvas.getContext('2d');
+  const drawingArea = drawingCanvas.closest('.drawing-playground');
+  const isLocalizedDrawing = Boolean(drawingArea);
   const drawingClear = document.querySelector('.drawing-clear');
   const drawingPage = document.body;
   const drawingContent = document.querySelector('.subpage');
-  const protectedDrawingElements = Array.from(document.querySelectorAll(
+  const protectedDrawingElements = isLocalizedDrawing ? [] : Array.from(document.querySelectorAll(
     '.interactive-title, .drawing-playground, .about-copy, .funfacts-section, .subpage-back'
   ));
   const strokes = [];
@@ -1337,8 +1342,12 @@ if (drawingCanvas) {
 
   function resizeDrawingCanvas(options = {}) {
     const shouldScaleStrokes = options.scaleStrokes === true;
-    const nextWidth = Math.max(document.documentElement.scrollWidth, window.innerWidth);
-    const nextHeight = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+    const nextWidth = isLocalizedDrawing
+      ? drawingArea.clientWidth
+      : Math.max(document.documentElement.scrollWidth, window.innerWidth);
+    const nextHeight = isLocalizedDrawing
+      ? drawingArea.clientHeight
+      : Math.max(document.documentElement.scrollHeight, window.innerHeight);
 
     if (nextWidth === canvasWidth && nextHeight === canvasHeight) {
       return;
@@ -1385,7 +1394,11 @@ if (drawingCanvas) {
     const events = event.getCoalescedEvents?.() || [event];
 
     events.forEach(pointerEvent => {
-      activeStroke.push({ x: pointerEvent.pageX, y: pointerEvent.pageY });
+      const rect = isLocalizedDrawing ? drawingArea.getBoundingClientRect() : null;
+      activeStroke.push({
+        x: isLocalizedDrawing ? pointerEvent.clientX - rect.left : pointerEvent.pageX,
+        y: isLocalizedDrawing ? pointerEvent.clientY - rect.top : pointerEvent.pageY
+      });
     });
 
     renderDrawing();
@@ -1419,6 +1432,10 @@ if (drawingCanvas) {
       return;
     }
 
+    if (isLocalizedDrawing && !event.target.closest('.drawing-playground')) {
+      return;
+    }
+
     if (event.pointerType === 'mouse' && event.button !== 0) {
       return;
     }
@@ -1426,7 +1443,11 @@ if (drawingCanvas) {
     event.preventDefault();
     activePointer = event.pointerId;
     activeStroke = [];
-    pendingStartPoint = { x: event.pageX, y: event.pageY };
+    const rect = isLocalizedDrawing ? drawingArea.getBoundingClientRect() : null;
+    pendingStartPoint = {
+      x: isLocalizedDrawing ? event.clientX - rect.left : event.pageX,
+      y: isLocalizedDrawing ? event.clientY - rect.top : event.pageY
+    };
     strokeStarted = false;
     strokes.push(activeStroke);
   }, { capture: true });
