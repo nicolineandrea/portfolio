@@ -452,6 +452,13 @@ h1 > .word {
   margin-top: clamp(12px, 2vw, 24px);
 }
 
+.project-native-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #111111;
+}
+
 .project-section {
   position: relative;
   --project-frame-offset: clamp(8px, 1.2vw, 14px);
