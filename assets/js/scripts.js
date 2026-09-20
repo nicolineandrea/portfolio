@@ -80,6 +80,40 @@ document.querySelectorAll('img[data-hover-src], img[data-hover-group], img[data-
   interactionTarget.addEventListener('focusout', showOriginalImage);
 });
 
+document.querySelectorAll('a.press-photo-download[download]').forEach(link => {
+  link.addEventListener('click', async event => {
+    event.preventDefault();
+    link.setAttribute('aria-busy', 'true');
+
+    try {
+      const response = await fetch(link.href, { credentials: 'same-origin' });
+
+      if (!response.ok) {
+        throw new Error(`Photo download failed with status ${response.status}`);
+      }
+
+      const photoBlob = await response.blob();
+      const photoUrl = URL.createObjectURL(photoBlob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = photoUrl;
+      downloadLink.download = link.getAttribute('download') || 'press-photo.jpg';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      window.setTimeout(() => URL.revokeObjectURL(photoUrl), 1000);
+    } catch (error) {
+      const fallbackLink = document.createElement('a');
+      fallbackLink.href = link.href;
+      fallbackLink.download = link.getAttribute('download') || 'press-photo.jpg';
+      document.body.appendChild(fallbackLink);
+      fallbackLink.click();
+      fallbackLink.remove();
+    } finally {
+      link.removeAttribute('aria-busy');
+    }
+  });
+});
+
 document.querySelectorAll('.js-youtube-embed[data-youtube-id]').forEach(preview => {
   preview.addEventListener('click', event => {
     event.preventDefault();
@@ -178,6 +212,23 @@ document.querySelectorAll('[data-audio-player]').forEach(player => {
   audio.addEventListener('timeupdate', syncAudioProgress);
   audio.addEventListener('loadedmetadata', syncAudioProgress);
   audio.addEventListener('ended', syncAudioProgress);
+});
+
+document.querySelectorAll(
+  '.digital-works-page .weather-sound-project, .digital-works-page .digital-playground-project'
+).forEach(project => {
+  const showAccent = () => project.classList.add('is-accented');
+  const hideMouseAccent = event => {
+    if (event.pointerType === 'mouse') {
+      project.classList.remove('is-accented');
+    }
+  };
+
+  project.addEventListener('pointerenter', showAccent);
+  project.addEventListener('pointerdown', showAccent);
+  project.addEventListener('pointerleave', hideMouseAccent);
+  project.addEventListener('focusin', showAccent);
+  project.addEventListener('focusout', () => project.classList.remove('is-accented'));
 });
 
 document.querySelectorAll('.artwork-gallery').forEach(gallery => {
@@ -466,60 +517,75 @@ if (isPageReload) {
   window.addEventListener('pageshow', returnToPageTop, { once: true });
 }
 
-const aboutNavLink = document.querySelector('.main-nav a[href="about-me.html"]');
-const musicNavLink = document.querySelector('.main-nav a[href="bands-live.html"]');
+const lastVisitedStorageKey = 'last-visited-section';
+const visitedSections = {
+  about: {
+    pageClass: 'about-page',
+    href: 'about-me.html',
+    navClass: 'about-returned'
+  },
+  music: {
+    pageClass: 'music-page',
+    href: 'bands-live.html',
+    navClass: 'music-returned'
+  },
+  audiovisual: {
+    pageClass: 'audiovisual-page',
+    href: 'audiovisual-works.html',
+    navClass: 'audiovisual-returned'
+  },
+  soundCode: {
+    pageClass: 'digital-works-page',
+    href: 'sound-digital-works.html',
+    navClass: 'sound-code-returned'
+  },
+  contact: {
+    pageClass: 'contact-press-page',
+    href: 'contact-and-press.html',
+    navClass: 'contact-returned'
+  }
+};
 
-function markAboutReturn() {
-  if (!aboutNavLink) {
+const currentVisitedSection = Object.entries(visitedSections).find(([, section]) => (
+  document.body.classList.contains(section.pageClass)
+));
+
+if (currentVisitedSection) {
+  try {
+    localStorage.setItem(lastVisitedStorageKey, currentVisitedSection[0]);
+  } catch (error) {
+    // The page still works if storage is unavailable.
+  }
+}
+
+function markLastVisitedSection() {
+  const mainNavigation = document.querySelector('.main-nav');
+
+  if (!mainNavigation) {
     return;
   }
 
+  Object.values(visitedSections).forEach(section => {
+    mainNavigation.querySelector(`a[href="${section.href}"]`)?.classList.remove(section.navClass);
+  });
+
   try {
-    if (sessionStorage.getItem('returning-from-about') === 'true') {
-      aboutNavLink.classList.add('about-returned');
-      sessionStorage.removeItem('returning-from-about');
+    const lastVisitedSection = visitedSections[localStorage.getItem(lastVisitedStorageKey)];
+
+    if (!lastVisitedSection) {
+      return;
     }
+
+    mainNavigation
+      .querySelector(`a[href="${lastVisitedSection.href}"]`)
+      ?.classList.add(lastVisitedSection.navClass);
   } catch (error) {
     // The navigation still works if storage is unavailable.
   }
 }
 
-if (document.body.classList.contains('about-page')) {
-  try {
-    sessionStorage.setItem('returning-from-about', 'true');
-  } catch (error) {
-    // The navigation still works if storage is unavailable.
-  }
-} else {
-  markAboutReturn();
-  window.addEventListener('pageshow', markAboutReturn);
-}
-
-function markMusicReturn() {
-  if (!musicNavLink) {
-    return;
-  }
-
-  try {
-    if (sessionStorage.getItem('returning-from-music') === 'true') {
-      musicNavLink.classList.add('music-returned');
-      sessionStorage.removeItem('returning-from-music');
-    }
-  } catch (error) {
-    // The navigation still works if storage is unavailable.
-  }
-}
-
-if (document.body.classList.contains('music-page')) {
-  try {
-    sessionStorage.setItem('returning-from-music', 'true');
-  } catch (error) {
-    // The navigation still works if storage is unavailable.
-  }
-} else {
-  markMusicReturn();
-  window.addEventListener('pageshow', markMusicReturn);
-}
+markLastVisitedSection();
+window.addEventListener('pageshow', markLastVisitedSection);
 
 const micToggle = document.querySelector('.mic-toggle');
 
@@ -528,6 +594,8 @@ if (micToggle) {
   const micWave = document.querySelector('.mic-wave');
   const micWaveContext = micWave.getContext('2d');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const micWaveColor = getComputedStyle(document.body).getPropertyValue('--page-accent').trim()
+    || '#111111';
 
   let audioContext;
   let microphoneStream;
@@ -623,12 +691,16 @@ if (micToggle) {
       recordingHistory.shift();
     }
 
+    while (recordingHistory.length < maximumPoints) {
+      recordingHistory.unshift({ level: 0 });
+    }
+
     micWaveContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     micWaveContext.clearRect(0, 0, width, height);
-    micWaveContext.lineWidth = 1.35;
+    micWaveContext.lineWidth = 5;
     micWaveContext.lineCap = 'round';
     micWaveContext.lineJoin = 'round';
-    micWaveContext.strokeStyle = '#111111';
+    micWaveContext.strokeStyle = micWaveColor;
 
     const center = height / 2;
     drawWaveSide(-1, center, height, spacing);
@@ -781,6 +853,7 @@ if (micToggle) {
     }
   });
 
+  drawRecordingLine();
   window.addEventListener('resize', drawRecordingLine);
   window.addEventListener('pagehide', () => {
     cancelAnimationFrame(microphoneAnimation);

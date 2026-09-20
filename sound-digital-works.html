@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sound &amp; Code — Nicoline Andrea</title>
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260915-weather-video">
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260920-footer-small">
 </head>
 <body class="sound-games-page digital-works-page drawing-page">
   <main class="subpage">
@@ -40,29 +40,44 @@
     </section>
     <section class="work-group">
       <h2 class="work-group-title effect-stretch">Coding</h2>
-      <section class="project-section">
-        <h3>WeatherSynth</h3>
-        <p class="project-subtitle">A Weather-Driven Digital Synthesizer</p>
-        <p class="project-note"><strong>Weather Sound</strong> is a Python-driven Raspberry Pi project that transforms weather data into sound. The system can receive weather data either from physical sensors or through a weather API. Parameters are mapped to musical parameters and processed by an algorithm that generates sound from the incoming data. The result is a sonification of the weather.</p>
+      <section class="project-section weather-sound-project">
+        <h3>Weather Sound</h3>
+        <p class="project-note">This Python-driven Raspberry Pi project transforms weather data into sound. The system can receive weather data either from physical sensors or through a weather API. Parameters are mapped to musical parameters and processed by an algorithm that generates sound from the incoming data. The result is a sonification of the weather.</p>
         <p class="project-note">In the installation version, visitors can enter the name of a city. When using the API mode, the system retrieves the current weather data for that location and translates it into sound in real time.</p>
-        <video class="project-native-video project-video-preview" controls playsinline preload="metadata" aria-label="WeatherSynth demonstration video">
-          <source src="assets/videos/WEATHERSOUNDVIDEO.mp4" type="video/mp4">
+        <video class="project-native-video project-video-preview" controls playsinline preload="metadata" aria-label="Weather Sound demonstration video">
+          <source src="assets/videos/weather-synth-demo.mp4" type="video/mp4">
           Your browser does not support the video element.
         </video>
       </section>
-      <section class="project-section" aria-labelledby="digital-playground-title">
+      <section class="project-section digital-playground-project" aria-labelledby="digital-playground-title">
         <h3 id="digital-playground-title">Digital Playground</h3>
-        <div class="digital-playground drawing-playground">
-          <div class="drawing-controls" aria-label="Drawing controls">
-            <span class="drawing-hint">HOLD TO DRAW</span>
-            <button class="drawing-clear" type="button" disabled hidden>CLEAR</button>
+        <p class="project-note">The Digital Playground is a collection of small snippets and playful gadgets I coded while exploring creative coding ideas. They do not necessarily serve a larger purpose&mdash;they are simply experiments, curious interactions and ideas I found fun to make.</p>
+        <div class="digital-playground-grid">
+          <div class="digital-playground drawing-playground">
+            <div class="drawing-controls" aria-label="Drawing controls">
+              <span class="drawing-hint">HOLD TO DRAW</span>
+              <button class="drawing-clear" type="button" disabled hidden>CLEAR</button>
+            </div>
+            <canvas class="drawing-canvas" aria-hidden="true"></canvas>
           </div>
-          <canvas class="drawing-canvas" aria-hidden="true"></canvas>
+          <div class="digital-playground sound-playground">
+            <div class="mic-control">
+              <button class="mic-toggle" type="button">SOUND ON</button>
+              <div class="mic-meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <canvas class="mic-wave" aria-hidden="true"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </section>
     <a class="subpage-back" href="index.html#main-nav" aria-label="Zurück zu den Themen">←</a>
   </main>
-  <script src="assets/js/scripts.js?v=20260915-audio-labels"></script>
+  <footer class="site-footer">
+    <div class="site-footer-content">
+      <p>Website concept, design and development by Nicoline Andrea Janka. Built from scratch using HTML, CSS and JavaScript as part of an ongoing creative practice and ongoing projects.</p>
+    </div>
+  </footer>
+  <script src="assets/js/scripts.js?v=20260920-wave-to-frame"></script>
 </body>
 </html>
