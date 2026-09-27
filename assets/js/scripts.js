@@ -863,9 +863,9 @@ if (micToggle) {
 
 const drawingCanvas = document.querySelector('.drawing-canvas, .about-drawing');
 
-const musicCopy = document.querySelector('.music-page .subpage-copy');
+const musicCopies = document.querySelectorAll('.music-page .subpage-copy');
 
-if (musicCopy) {
+musicCopies.forEach(musicCopy => {
   musicCopy.querySelectorAll('p').forEach(paragraph => {
     const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
     const textNodes = [];
@@ -907,7 +907,7 @@ if (musicCopy) {
 
   musicCopy.addEventListener('pointerover', discoverAlbum);
   musicCopy.addEventListener('focusin', discoverAlbum);
-}
+});
 
 document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
   pressKitLink.addEventListener('click', () => {
