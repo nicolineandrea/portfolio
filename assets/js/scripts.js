@@ -862,32 +862,33 @@ document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
   const funfactsNext = document.querySelector('.funfacts-next');
   const allFunfacts = [
     'I like dinosaurs.',
-    'As a child, I collected insects and let them live in my bedside table.',
     'My favourite animal is the frog.',
-    'My cat is not my cat. She is my daughter.',
-    'In kindergarten, I was convinced I would play the trumpet.',
-    'I once broke my foot in three places.',
-    'I once split a tooth in half with chewing gum.',
+    'I have a six-year-old cat girl.',
+    'I have always been obsessed with insects.',
+    'I am super clumsy.',
     'I can tattoo.',
     'I can spell any word backwards in seconds.',
     'I hate caramel.',
     'I love lava lamps.',
     'I am a night owl.',
     'I live vegetarian, sometimes vegan.',
-    'I could live on spaghetti.',
+    'My favourite meal is spaghetti.',
     'I once raised a newborn goat.',
     'If I had not become a musician, I would probably be a vet or a mathematician.',
     'I think I can recreate anything that is explained on YouTube. I never finish watching the video before I start.',
     'I never read instruction manuals.',
-    'I have an entire list of ways to destroy glasses and phones.',
+    'I am used to breaking my glasses and phones.',
     'I talk too much and too fast sometimes.',
     'I talk in my sleep.',
     'Romansh is my first language.',
-    'I am allergic to the adhesive on plasters.',
     'I love thrift stores.',
     'I make my own jewellery.',
     'I do not trust people who do not like animals.',
-    'I am always stressed and always bored at the same time.'
+    'I am always stressed and always bored at the same time.',
+    'I like horror movies.',
+    'I am a gamer and I game too much.',
+    'As a kid, I wanted to play the trumpet.',
+    'I get startled super easily.'
   ];
 
   let selectedFunfacts = [];
