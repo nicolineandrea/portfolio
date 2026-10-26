@@ -1,5 +1,6 @@
 assets/raw-video/
 archive/legacy-pages/
+/archive/
 .venv/
 tmp/
 _media-to-take-out/

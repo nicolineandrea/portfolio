@@ -13,6 +13,7 @@ document.querySelectorAll('h1 .word').forEach(word => {
 });
 
 const swappedImagePairs = new Set();
+const preloadedHoverSources = new Set();
 
 document.querySelectorAll('img[data-hover-src], img[data-hover-group], img[data-hover-options], img[data-swap-pair]').forEach(image => {
   const originalSource = image.getAttribute('src');
@@ -36,6 +37,11 @@ document.querySelectorAll('img[data-hover-src], img[data-hover-group], img[data-
   const interactionTarget = image.closest('.artwork-item') || image;
 
   [fixedHoverSource, ...randomHoverSources].filter(Boolean).forEach(source => {
+    if (preloadedHoverSources.has(source)) {
+      return;
+    }
+
+    preloadedHoverSources.add(source);
     const hoverImage = new Image();
     hoverImage.src = source;
   });
@@ -111,47 +117,6 @@ document.querySelectorAll('a.press-photo-download[download]').forEach(link => {
     } finally {
       link.removeAttribute('aria-busy');
     }
-  });
-});
-
-document.querySelectorAll('.js-youtube-embed[data-youtube-id]').forEach(preview => {
-  preview.addEventListener('click', event => {
-    event.preventDefault();
-
-    const videoId = preview.dataset.youtubeId;
-
-    if (!videoId) {
-      return;
-    }
-
-    const params = new URLSearchParams({
-      autoplay: '1',
-      rel: '0',
-      iv_load_policy: '3',
-      playsinline: '1'
-    });
-
-    if (preview.dataset.youtubeStart) {
-      params.set('start', preview.dataset.youtubeStart);
-    }
-
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
-    iframe.title = preview.dataset.youtubeTitle || preview.getAttribute('aria-label') || 'YouTube video';
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    iframe.allowFullscreen = true;
-
-    const embed = document.createElement('div');
-    embed.className = preview.className
-      .replace(/\bjs-youtube-embed\b/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    embed.classList.add('video-embed');
-    embed.appendChild(iframe);
-
-    preview.replaceWith(embed);
   });
 });
 
@@ -314,7 +279,7 @@ document.querySelectorAll('.work-group-title').forEach(title => {
   title.setAttribute('aria-label', text);
   title.textContent = '';
 
-  [...text].forEach((character, index) => {
+  [...text].forEach(character => {
     if (/\s/.test(character)) {
       title.appendChild(document.createTextNode(character));
       return;
@@ -324,8 +289,6 @@ document.querySelectorAll('.work-group-title').forEach(title => {
 
     letter.className = 'work-title-letter';
     letter.setAttribute('aria-hidden', 'true');
-    letter.style.setProperty('--letter-index', index);
-    letter.style.setProperty('--pixel-x', `${index % 2 === 0 ? -5 : 5}px`);
     letter.textContent = character;
     title.appendChild(letter);
   });
@@ -375,69 +338,6 @@ function syncSiteContentWidth() {
 syncSiteContentWidth();
 window.addEventListener('resize', syncSiteContentWidth);
 document.fonts?.ready.then(syncSiteContentWidth);
-
-const reducedTitleMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-document.querySelectorAll('.effect-pixel').forEach(title => {
-  let cleanupTimer;
-
-  function clearFragments() {
-    title.querySelectorAll('.pixel-fragment').forEach(fragment => fragment.remove());
-  }
-
-  function createFragments() {
-    if (reducedTitleMotion.matches) {
-      return;
-    }
-
-    clearTimeout(cleanupTimer);
-    clearFragments();
-
-    const titleRect = title.getBoundingClientRect();
-    const letters = [...title.querySelectorAll('.work-title-letter')];
-
-    letters.forEach((letter, letterIndex) => {
-      const rect = letter.getBoundingClientRect();
-      const pixelSize = Math.max(5, Math.min(12, rect.height / 7));
-      const columns = Math.max(2, Math.round(rect.width / pixelSize));
-      const rows = 4;
-
-      for (let row = 0; row < rows; row += 1) {
-        for (let column = 0; column < columns; column += 1) {
-          const fragment = document.createElement('span');
-          const centerOffset = column - (columns - 1) / 2;
-          const driftX = centerOffset * 20 + (letterIndex - (letters.length - 1) / 2) * 10;
-          const driftY = 30 + row * 18 + Math.abs(centerOffset) * 7;
-          const rotate = (letterIndex % 2 === 0 ? -1 : 1) * (12 + row * 8 + column * 3);
-
-          fragment.className = 'pixel-fragment';
-          fragment.style.left = `${rect.left - titleRect.left + column * pixelSize}px`;
-          fragment.style.top = `${rect.top - titleRect.top + row * pixelSize * 1.35}px`;
-          fragment.style.width = `${pixelSize}px`;
-          fragment.style.height = `${pixelSize}px`;
-          fragment.style.setProperty('--pixel-dx', `${driftX}px`);
-          fragment.style.setProperty('--pixel-dy', `${driftY}px`);
-          fragment.style.setProperty('--pixel-r', `${rotate}deg`);
-          title.appendChild(fragment);
-        }
-      }
-    });
-
-    requestAnimationFrame(() => {
-      title.classList.add('is-pixelated');
-    });
-  }
-
-  function resetFragments() {
-    title.classList.remove('is-pixelated');
-    cleanupTimer = setTimeout(clearFragments, 320);
-  }
-
-  title.addEventListener('pointerenter', createFragments);
-  title.addEventListener('pointerleave', resetFragments);
-  title.addEventListener('focusin', createFragments);
-  title.addEventListener('focusout', resetFragments);
-});
 
 document.querySelectorAll('.member-credit-line').forEach(creditLine => {
   const portrait = creditLine.closest('.band-portrait');
@@ -559,14 +459,8 @@ if (currentVisitedSection) {
 }
 
 function markLastVisitedSection() {
-  const mainNavigation = document.querySelector('.main-nav');
-
-  if (!mainNavigation) {
-    return;
-  }
-
   Object.values(visitedSections).forEach(section => {
-    mainNavigation.querySelector(`a[href="${section.href}"]`)?.classList.remove(section.navClass);
+    mainNav.querySelector(`a[href="${section.href}"]`)?.classList.remove(section.navClass);
   });
 
   try {
@@ -576,7 +470,7 @@ function markLastVisitedSection() {
       return;
     }
 
-    mainNavigation
+    mainNav
       .querySelector(`a[href="${lastVisitedSection.href}"]`)
       ?.classList.add(lastVisitedSection.navClass);
   } catch (error) {
@@ -584,8 +478,10 @@ function markLastVisitedSection() {
   }
 }
 
-markLastVisitedSection();
-window.addEventListener('pageshow', markLastVisitedSection);
+if (mainNav) {
+  markLastVisitedSection();
+  window.addEventListener('pageshow', markLastVisitedSection);
+}
 
 const micToggle = document.querySelector('.mic-toggle');
 
@@ -863,15 +759,17 @@ if (micToggle) {
 
 const drawingCanvas = document.querySelector('.drawing-canvas, .about-drawing');
 
-const musicCopies = document.querySelectorAll('.music-page .subpage-copy');
+function wrapCopyWords(copy, excludedSelector, wordClass) {
+  if (!copy) {
+    return;
+  }
 
-musicCopies.forEach(musicCopy => {
-  musicCopy.querySelectorAll('p').forEach(paragraph => {
+  copy.querySelectorAll('p').forEach(paragraph => {
     const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
     const textNodes = [];
 
     while (walker.nextNode()) {
-      if (!walker.currentNode.parentElement.closest('.album-title, .band-link')) {
+      if (!walker.currentNode.parentElement.closest(excludedSelector)) {
         textNodes.push(walker.currentNode);
       }
     }
@@ -887,7 +785,7 @@ musicCopies.forEach(musicCopy => {
         }
 
         const word = document.createElement('span');
-        word.className = 'music-word';
+        word.className = wordClass;
         word.textContent = part;
         fragment.appendChild(word);
       });
@@ -895,6 +793,10 @@ musicCopies.forEach(musicCopy => {
       textNode.replaceWith(fragment);
     });
   });
+}
+
+document.querySelectorAll('.music-page .subpage-copy').forEach(musicCopy => {
+  wrapCopyWords(musicCopy, '.album-title, .band-link', 'music-word');
 
   const discoverAlbum = event => {
     if (
@@ -909,6 +811,24 @@ musicCopies.forEach(musicCopy => {
   musicCopy.addEventListener('focusin', discoverAlbum);
 });
 
+document.querySelectorAll('.audiovisual-page .project-section').forEach(projectCopy => {
+  wrapCopyWords(projectCopy, 'a, .audiovisual-word', 'audiovisual-word');
+
+  const discoverProjectLink = event => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+
+    const link = event.target.closest('.project-title-link, .project-note-link');
+    if (link) {
+      link.classList.add('is-discovered');
+    }
+  };
+
+  projectCopy.addEventListener('pointerover', discoverProjectLink);
+  projectCopy.addEventListener('focusin', discoverProjectLink);
+});
+
 document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
   pressKitLink.addEventListener('click', () => {
     pressKitLink.classList.add('is-discovered');
@@ -917,64 +837,24 @@ document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
 
 {
   const aboutCopyElement = document.querySelector('.about-copy');
+  wrapCopyWords(aboutCopyElement, '.keyword, .future-link, .about-word', 'about-word');
 
-  function wrapAboutCopyWords() {
-    if (!aboutCopyElement) {
+  const discoverAboutLink = event => {
+    if (!(event.target instanceof Element)) {
       return;
     }
 
-    aboutCopyElement.querySelectorAll('p').forEach(paragraph => {
-      const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
-      const textNodes = [];
-
-      while (walker.nextNode()) {
-        if (!walker.currentNode.parentElement.closest('.keyword, .future-link, .about-word')) {
-          textNodes.push(walker.currentNode);
-        }
-      }
-
-      textNodes.forEach(textNode => {
-        const fragment = document.createDocumentFragment();
-        const parts = textNode.textContent.split(/(\s+)/);
-
-        parts.forEach(part => {
-          if (!part || /^\s+$/.test(part)) {
-            fragment.appendChild(document.createTextNode(part));
-            return;
-          }
-
-          const word = document.createElement('span');
-          word.className = 'about-word';
-          word.textContent = part;
-          fragment.appendChild(word);
-        });
-
-        textNode.replaceWith(fragment);
-      });
-    });
-  }
-
-  wrapAboutCopyWords();
-
-  aboutCopyElement?.addEventListener('pointerover', event => {
-    if (event.target instanceof Element && event.target.matches('.keyword')) {
+    if (event.target.matches('.keyword')) {
       event.target.classList.add('is-discovered');
     }
 
-    if (event.target instanceof Element && event.target.matches('.future-link')) {
+    if (event.target.matches('.future-link')) {
       event.target.classList.add('is-visited');
     }
-  });
+  };
 
-  aboutCopyElement?.addEventListener('focusin', event => {
-    if (event.target instanceof Element && event.target.matches('.keyword')) {
-      event.target.classList.add('is-discovered');
-    }
-
-    if (event.target instanceof Element && event.target.matches('.future-link')) {
-      event.target.classList.add('is-visited');
-    }
-  });
+  aboutCopyElement?.addEventListener('pointerover', discoverAboutLink);
+  aboutCopyElement?.addEventListener('focusin', discoverAboutLink);
 
   const aboutMeTrigger = document.querySelector('.about-me-trigger');
   const funfactsSection = document.querySelector('.funfacts-section');
@@ -1154,9 +1034,10 @@ if (drawingCanvas) {
       if (stroke.length === 1) {
         drawingContext.lineTo(stroke[0].x + 0.01, stroke[0].y + 0.01);
       } else {
-        stroke.slice(1).forEach(point => {
+        for (let index = 1; index < stroke.length; index++) {
+          const point = stroke[index];
           drawingContext.lineTo(point.x, point.y);
-        });
+        }
       }
 
       drawingContext.stroke();
@@ -1465,9 +1346,9 @@ if (drawingCanvas) {
 
   function addDrawingPoint(event) {
     const events = event.getCoalescedEvents?.() || [event];
+    const rect = isLocalizedDrawing ? drawingArea.getBoundingClientRect() : null;
 
     events.forEach(pointerEvent => {
-      const rect = isLocalizedDrawing ? drawingArea.getBoundingClientRect() : null;
       activeStroke.push({
         x: isLocalizedDrawing ? pointerEvent.clientX - rect.left : pointerEvent.pageX,
         y: isLocalizedDrawing ? pointerEvent.clientY - rect.top : pointerEvent.pageY
