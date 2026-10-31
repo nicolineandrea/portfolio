@@ -1,0 +1,125 @@
+<div id="music-layout-ideas" aria-label="Band section layout ideas">
+  <div class="viz-carousel viz-dotted-background" aria-label="Band page layout options">
+    <section data-variant="Narrow text" aria-label="Narrow text layout">
+      <div class="band-concept narrow" aria-label="Narrow text preview">
+        <article>
+          <h2>AANIM</h2>
+          <p><a href="https://www.aanim.net/" target="_blank" rel="noopener noreferrer">AANIM</a> is a five-piece band mainly active around Bern and Lucerne. I sing and play synths in the band. We love cozy shows, small rooms and being close to the audience.</p>
+        </article>
+        <article>
+          <h2>Kim.a</h2>
+          <p>Every part of the music is created by Nicoline Andrea Janka: she writes and composes all songs and produces them in REAPER and Ableton Live. On stage, she performs with a live drummer.</p>
+        </article>
+      </div>
+    </section>
+    <section data-variant="Split layout" aria-label="Text beside media layout" hidden>
+      <div class="band-concept split" aria-label="Split layout preview">
+        <article>
+          <div class="band-intro">
+            <h2>AANIM</h2>
+            <p><a href="https://www.aanim.net/" target="_blank" rel="noopener noreferrer">AANIM</a> is a five-piece band mainly active around Bern and Lucerne. I sing and play synths in the band. We love cozy shows, small rooms and being close to the audience.</p>
+          </div>
+          <div class="media-position" aria-label="Position of existing band photo"><span>BAND PHOTO</span></div>
+        </article>
+        <article>
+          <div class="band-intro">
+            <h2>Kim.a</h2>
+            <p>Every part of the music is created by Nicoline Andrea Janka: she writes and composes all songs and produces them in REAPER and Ableton Live. On stage, she performs with a live drummer.</p>
+          </div>
+          <div class="media-position" aria-label="Position of existing live video"><span>LIVE VIDEO</span></div>
+        </article>
+      </div>
+    </section>
+    <section data-variant="Name beside text" aria-label="Band name beside description layout" hidden>
+      <div class="band-concept name-column" aria-label="Name beside text preview">
+        <article>
+          <h2>AANIM</h2>
+          <p><a href="https://www.aanim.net/" target="_blank" rel="noopener noreferrer">AANIM</a> is a five-piece band mainly active around Bern and Lucerne. I sing and play synths in the band. We love cozy shows, small rooms and being close to the audience.</p>
+        </article>
+        <article>
+          <h2>Kim.a</h2>
+          <p>Every part of the music is created by Nicoline Andrea Janka: she writes and composes all songs and produces them in REAPER and Ableton Live. On stage, she performs with a live drummer.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+</div>
+<style>
+  #music-layout-ideas .band-concept {
+    --band-paper: light-dark(#ffffff, #171717);
+    --band-ink: light-dark(#111111, #f0f0f0);
+    --band-blue: light-dark(#0000ff, #9696ff);
+    --band-media: light-dark(#ececec, #292929);
+    --copy-measure: 44ch;
+    color: var(--band-ink);
+    background: var(--band-paper);
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 32px;
+    min-height: 640px;
+    box-sizing: border-box;
+  }
+  #music-layout-ideas .band-concept * { box-sizing: border-box; }
+  #music-layout-ideas .band-concept article + article { margin-top: 64px; }
+  #music-layout-ideas .band-concept h2 {
+    margin: 0 0 24px;
+    font-size: clamp(44px, 9vw, 76px);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 0.86;
+  }
+  #music-layout-ideas .band-concept p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.35;
+    text-align: left;
+  }
+  #music-layout-ideas .band-concept a,
+  #music-layout-ideas .music-link { color: var(--band-blue); text-decoration: none; }
+  #music-layout-ideas .narrow p { max-width: var(--copy-measure); }
+  #music-layout-ideas .split article {
+    display: grid;
+    grid-template-columns: 1fr 0.9fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+  #music-layout-ideas .split h2 { font-size: clamp(40px, 8vw, 65px); }
+  #music-layout-ideas .media-position {
+    min-width: 0;
+    min-height: 170px;
+    display: grid;
+    place-items: center;
+    color: var(--band-ink);
+    background: var(--band-media);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+  #music-layout-ideas .name-column article {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+    gap: 30px;
+    align-items: start;
+  }
+  #music-layout-ideas .name-column h2 { font-size: clamp(38px, 7vw, 64px); }
+  @media (max-width: 520px) {
+    #music-layout-ideas .band-concept { padding: 24px 20px; min-height: 960px; }
+    #music-layout-ideas .split article,
+    #music-layout-ideas .name-column article { grid-template-columns: 1fr; gap: 20px; }
+    #music-layout-ideas .media-position { min-height: 120px; }
+    #music-layout-ideas .band-concept article + article { margin-top: 48px; }
+    #music-layout-ideas .band-concept h2 { margin-bottom: 18px; }
+  }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('music-layout-ideas');
+  const narrow = root.querySelector('.narrow');
+  const settings = { characters: 44 };
+  const render = () => narrow.style.setProperty('--copy-measure', `${settings.characters}ch`);
+  render();
+  if (globalThis.Tweak) {
+    const tweak = new Tweak({ container: narrow, onChange: render });
+    tweak.addSlider(settings, 'characters', { label: 'Text width', min: 32, max: 60, step: 1, unit: 'characters' });
+  }
+})();
+</script>

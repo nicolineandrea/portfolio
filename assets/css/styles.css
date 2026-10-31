@@ -4,6 +4,11 @@
 
 :root {
   --site-content-width: min(100%, calc(clamp(46px, 7.1vw, 112px) * 7.38));
+  --link-hover-color: #c38de3;
+}
+
+a[href] {
+  text-decoration: none;
 }
 
 body {
@@ -1062,6 +1067,7 @@ h1 > .word {
 
 .music-page {
   --page-accent: #0000ff;
+  --link-hover-color: var(--page-accent);
   overflow-x: hidden;
 }
 
@@ -2655,15 +2661,13 @@ a.contact-detail:focus-visible,
   }
 }
 
-/* Make every visible text link unmistakable on hover and keyboard focus. */
+/* Use each page's link color without underlines on hover and keyboard focus. */
 a[href]:not(.main-nav a):not(.video-link):not(.project-media-link):not(.artwork-item):not(.press-photo-download):not(.subpage-back):hover,
 a[href]:not(.main-nav a):not(.video-link):not(.project-media-link):not(.artwork-item):not(.press-photo-download):not(.subpage-back):focus-visible,
 .press-photo-download:hover .press-photo-caption,
 .press-photo-download:focus-visible .press-photo-caption {
-  text-decoration-line: underline;
-  text-decoration-color: currentColor;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.14em;
+  color: var(--link-hover-color);
+  text-decoration: none;
 }
 
 @media print {
