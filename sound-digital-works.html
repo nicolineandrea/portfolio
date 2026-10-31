@@ -8,7 +8,7 @@
 </head>
 <body class="sound-games-page digital-works-page drawing-page">
   <main class="subpage">
-    <section class="work-group">
+    <section class="work-group systems-group" id="systems">
       <h2 class="work-group-title effect-stretch">Systems</h2>
       <section class="project-section acousmonium-project">
         <h3>Acousmonium</h3>
@@ -20,8 +20,8 @@
             <img src="assets/images/codeundsound/P1001095.jpg" data-hover-src="assets/images/codeundsound/P1001095g.jpg" alt="A selection of speaker drivers for the Acousmonium system" loading="lazy" decoding="async">
           </figure>
         </div>
-        <p class="project-note">During a study trip to Milan, we collaborated with Audior on the design and construction of an acousmonium. The process included acoustic calculations, selecting and assembling speaker components, and building the individual loudspeaker cabinets.</p>
-        <p class="project-note" id="splinters">Following the construction of the system, I composed <em>Splinters</em>, a piece created specifically for spatial performance on the acousmonium. The composition explores the distribution and movement of sound across the different loudspeakers and their individual sonic characteristics.</p>
+        <p class="project-note">During a study trip to Milan, we collaborated with <a class="project-note-link" href="https://www.audior.eu/" target="_blank" rel="noopener noreferrer">Audior Milano</a> on the design and construction of an acousmonium. The process included acoustic calculations, selecting and assembling speaker components, and building the individual loudspeaker cabinets.</p>
+        <p class="project-note" id="splinters">Following the construction of the system, I composed <a class="project-note-link" href="assets/audio/splinters-Nicoline-001.mp3" target="_blank" rel="noopener noreferrer"><em>Splinters</em></a>, a piece created specifically for spatial performance on the acousmonium. The composition explores the distribution and movement of sound across the different loudspeakers and their individual sonic characteristics.</p>
         <p class="project-note">The version presented here is a stereo mix of the original multichannel composition.</p>
         <div class="custom-audio-player" data-audio-player>
           <audio preload="metadata" src="assets/audio/splinters-Nicoline-001.mp3"></audio>
@@ -57,12 +57,61 @@
         <h3 id="digital-playground-title">Digital Playground</h3>
         <p class="project-note">The Digital Playground is a collection of small snippets and playful gadgets I coded while exploring creative coding ideas. They do not necessarily serve a larger purpose&mdash;they are simply experiments, curious interactions and ideas I found fun to make.</p>
         <div class="digital-playground-grid">
+          <div class="digital-playground trig-playground">
+            <span class="playground-title">Sine &amp; Cosine</span>
+            <svg class="trig-circle" viewBox="-1.5 -1.4 3 2.8" role="img" aria-label="Unit circle showing sine, cosine and angle">
+              <path d="M-1.25 0H1.25M0-1.2V1.2" class="trig-axes"></path>
+              <circle r="1" class="trig-outline"></circle>
+              <path class="trig-angle-arc"></path>
+              <path class="trig-radius"></path>
+              <path class="trig-cosine"></path>
+              <path class="trig-sine"></path>
+              <circle class="trig-point" r="0.045"></circle>
+              <text x="1.28" y="0.12">x</text>
+              <text x="0.07" y="-1.22">y</text>
+            </svg>
+            <svg class="trig-wave" viewBox="0 0 360 132" role="img" aria-label="Sine and cosine waves with the selected angle marked">
+              <path class="trig-wave-axes" d="M20 16V108H344M20 62H344"></path>
+              <path class="trig-sine-wave"></path>
+              <path class="trig-cosine-wave"></path>
+              <path class="trig-wave-cursor"></path>
+              <circle class="trig-wave-sine-point" r="4"></circle>
+              <circle class="trig-wave-cosine-point" r="3"></circle>
+              <text x="20" y="126">0°</text>
+              <text x="94" y="126">90°</text>
+              <text x="173" y="126">180°</text>
+              <text x="253" y="126">270°</text>
+              <text x="320" y="126">360°</text>
+              <text x="3" y="24">1</text>
+              <text x="0" y="106">−1</text>
+            </svg>
+            <output id="trig-values" for="trig-angle">45° · sin 0.707 · cos 0.707</output>
+            <div class="trig-inputs">
+              <label>Phasor (cycles)<input id="trig-phase" type="number" value="0.125" step="0.001"></label>
+              <label>Period (ms)<input id="trig-ms" type="number" value="4000" min="0.001" step="0.001"></label>
+              <label>Frequency (Hz)<input id="trig-hz" type="number" value="0.25" min="0.001" step="0.001"></label>
+              <button id="trig-play" type="button" aria-pressed="false">PLAY</button>
+            </div>
+          </div>
+          <div class="digital-playground koch-playground">
+            <div class="koch-controls">
+              <label for="koch-stage">Koch Curve</label>
+              <output for="koch-stage" id="koch-stage-value">Recursions: 3</output>
+            </div>
+            <svg class="koch-snowflake" viewBox="-0.12 -0.48 1.24 0.78" role="img" aria-label="Koch curve with 3 recursions">
+              <path fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+            </svg>
+            <input id="koch-stage" type="range" min="0" max="6" value="3" step="1" aria-label="Koch curve recursions">
+            <div class="koch-actions">
+              <button type="button" id="koch-rebuild">REPLAY</button>
+            </div>
+          </div>
           <div class="digital-playground drawing-playground">
             <div class="drawing-controls" aria-label="Drawing controls">
-              <span class="drawing-hint">HOLD TO DRAW</span>
+              <span class="drawing-hint">KALEIDOSCOPE</span>
               <button class="drawing-clear" type="button" disabled hidden>CLEAR</button>
             </div>
-            <canvas class="drawing-canvas" aria-hidden="true"></canvas>
+            <canvas class="kaleidoscope-canvas" aria-label="Kaleidoscope drawing area. Drag to draw mirrored patterns."></canvas>
           </div>
           <div class="digital-playground sound-playground">
             <div class="mic-control">
@@ -82,6 +131,9 @@
       <p>Website by Nicoline Andrea Janka.</p>
     </div>
   </footer>
-  <script src="assets/js/scripts.js?v=20260920-wave-to-frame"></script>
+  <script src="assets/js/scripts.js?v=20261031-systems-hover"></script>
+  <script src="assets/js/koch.js"></script>
+  <script src="assets/js/kaleidoscope.js"></script>
+  <script src="assets/js/trigonometry.js"></script>
 </body>
 </html>

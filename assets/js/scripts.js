@@ -179,23 +179,6 @@ document.querySelectorAll('[data-audio-player]').forEach(player => {
   audio.addEventListener('ended', syncAudioProgress);
 });
 
-document.querySelectorAll(
-  '.digital-works-page .weather-sound-project, .digital-works-page .digital-playground-project'
-).forEach(project => {
-  const showAccent = () => project.classList.add('is-accented');
-  const hideMouseAccent = event => {
-    if (event.pointerType === 'mouse') {
-      project.classList.remove('is-accented');
-    }
-  };
-
-  project.addEventListener('pointerenter', showAccent);
-  project.addEventListener('pointerdown', showAccent);
-  project.addEventListener('pointerleave', hideMouseAccent);
-  project.addEventListener('focusin', showAccent);
-  project.addEventListener('focusout', () => project.classList.remove('is-accented'));
-});
-
 document.querySelectorAll('.artwork-gallery').forEach(gallery => {
   const creditLines = [...gallery.querySelectorAll('.artwork-credit-line')];
 
@@ -757,6 +740,12 @@ if (micToggle) {
   });
 }
 
+document.querySelectorAll('p a[href]:not(:has(img, svg, video))').forEach(link => {
+  const keepPageColour = () => link.classList.add('is-colour-discovered');
+  link.addEventListener('pointerenter', keepPageColour);
+  link.addEventListener('focus', keepPageColour);
+});
+
 const drawingCanvas = document.querySelector('.drawing-canvas, .about-drawing');
 
 function wrapCopyWords(copy, excludedSelector, wordClass) {
@@ -764,7 +753,8 @@ function wrapCopyWords(copy, excludedSelector, wordClass) {
     return;
   }
 
-  copy.querySelectorAll('p').forEach(paragraph => {
+  const paragraphs = copy.matches('p') ? [copy] : copy.querySelectorAll('p');
+  paragraphs.forEach(paragraph => {
     const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
     const textNodes = [];
 
@@ -795,6 +785,15 @@ function wrapCopyWords(copy, excludedSelector, wordClass) {
   });
 }
 
+document.querySelectorAll('.digital-works-page .project-note').forEach(copy => {
+  wrapCopyWords(copy, 'a, .systems-word', 'systems-word');
+  copy.querySelectorAll('a').forEach(link => {
+    const discover = () => link.classList.add('is-discovered');
+    link.addEventListener('pointerenter', discover);
+    link.addEventListener('focus', discover);
+  });
+});
+
 document.querySelectorAll('.music-page .subpage-copy').forEach(musicCopy => {
   wrapCopyWords(musicCopy, '.album-title, .band-link', 'music-word');
 
@@ -819,7 +818,7 @@ document.querySelectorAll('.audiovisual-page .project-section').forEach(projectC
       return;
     }
 
-    const link = event.target.closest('.project-title-link, .project-note-link');
+    const link = event.target.closest('.project-note-link');
     if (link) {
       link.classList.add('is-discovered');
     }
@@ -839,17 +838,21 @@ document.querySelectorAll('.press-kit-link').forEach(pressKitLink => {
   const aboutCopyElement = document.querySelector('.about-copy');
   wrapCopyWords(aboutCopyElement, '.keyword, .future-link, .about-word', 'about-word');
 
+  aboutCopyElement?.querySelectorAll('a.keyword, a.future-link').forEach(link => {
+    link.dataset.linkEffect = 'box';
+  });
   const discoverAboutLink = event => {
     if (!(event.target instanceof Element)) {
       return;
     }
 
-    if (event.target.matches('.keyword')) {
-      event.target.classList.add('is-discovered');
+    const link = event.target.closest('.keyword, .future-link');
+    if (link?.matches('.keyword')) {
+      link.classList.add('is-discovered');
     }
 
-    if (event.target.matches('.future-link')) {
-      event.target.classList.add('is-visited');
+    if (link?.matches('.future-link')) {
+      link.classList.add('is-visited');
     }
   };
 

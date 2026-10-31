@@ -4,7 +4,7 @@
 
 :root {
   --site-content-width: min(100%, calc(clamp(46px, 7.1vw, 112px) * 7.38));
-  --link-hover-color: #c38de3;
+  --link-hover-color: #ace8e7;
 }
 
 a[href] {
@@ -196,7 +196,7 @@ h1 > .word {
 }
 
 .main-nav a.about-returned {
-  color: #c38de3;
+  color: #ace8e7;
 }
 
 .main-nav a.music-returned {
@@ -208,7 +208,7 @@ h1 > .word {
 }
 
 .main-nav a.sound-code-returned {
-  color: #ace8e7;
+  color: #9673b5;
 }
 
 .main-nav a.contact-returned {
@@ -598,6 +598,223 @@ h1 > .word {
   margin-top: clamp(12px, 1.5vw, 20px);
 }
 
+.koch-playground {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trig-playground {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.digital-playground-grid .playground-title {
+  font-size: clamp(17px, 1.7vw, 24px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.trig-circle {
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  overflow: visible;
+}
+
+.trig-circle path,
+.trig-outline {
+  fill: none;
+  stroke: var(--page-accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.trig-circle .trig-axes { stroke: #bbbbbb; stroke-width: 1; }
+.trig-circle .trig-radius { stroke: #111111; stroke-width: 1.5; }
+.trig-circle .trig-cosine { stroke-width: 4; }
+.trig-circle .trig-sine { stroke-width: 4; stroke-dasharray: 5 3; }
+.trig-point { fill: var(--page-accent); }
+.trig-circle text { font-size: 0.14px; fill: #111111; }
+#trig-values { font-size: clamp(11px, 1.1vw, 15px); font-variant-numeric: tabular-nums; }
+#trig-angle { width: 100%; min-height: 32px; margin: 0; accent-color: var(--page-accent); }
+
+.trig-wave {
+  display: block;
+  width: 100%;
+  height: clamp(68px, 8vw, 110px);
+  flex-shrink: 0;
+}
+
+.trig-wave path {
+  fill: none;
+  stroke: var(--page-accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.trig-wave .trig-wave-axes { stroke: #bbbbbb; stroke-width: 1; }
+.trig-wave .trig-cosine-wave { stroke-dasharray: 5 3; opacity: 0.65; }
+.trig-wave .trig-wave-cursor { stroke: #111111; stroke-width: 1; stroke-dasharray: 2 3; }
+.trig-wave circle { fill: var(--page-accent); }
+.trig-wave .trig-wave-cosine-point { fill: #ffffff; stroke: var(--page-accent); stroke-width: 2; }
+.trig-wave text { font-size: 11px; fill: #111111; }
+
+.trig-angle-controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.trig-angle-controls button {
+  border: 0;
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--page-accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.digital-playground-grid > .digital-playground.trig-playground {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  aspect-ratio: 1;
+  min-height: 0;
+  gap: 10px;
+}
+
+.trig-playground .playground-title,
+.trig-playground #trig-values,
+.trig-playground .trig-inputs { grid-column: 1 / -1; }
+.trig-playground .trig-circle,
+.trig-playground .trig-wave { height: 100%; width: 100%; min-height: 0; align-self: center; }
+.trig-playground #trig-values { font-size: clamp(11px, 1.1vw, 15px); }
+.trig-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 8px; }
+.trig-inputs label { min-width: 0; font-size: 11px; font-weight: 900; }
+.trig-inputs input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  border: 2px solid #111111;
+  padding: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+}
+.trig-inputs input:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 2px; }
+#trig-play { grid-column: 1 / -1; min-height: 32px; border: 2px solid currentColor; padding: 4px 12px; background: transparent; color: var(--page-accent); font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+.kaleidoscope-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.digital-playground-grid > .digital-playground {
+  aspect-ratio: 1;
+  min-height: 0;
+  height: auto;
+  min-width: 0;
+}
+
+.digital-playground-grid .drawing-hint,
+.digital-playground-grid .mic-toggle,
+.digital-playground-grid .koch-controls label {
+  font-size: clamp(17px, 1.7vw, 24px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.koch-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.koch-zoom-controls input {
+  flex: 1;
+  min-width: 0;
+  min-height: 28px;
+  accent-color: var(--page-accent);
+}
+
+#koch-reset,
+#koch-rebuild,
+#koch-expand {
+  padding: 6px 0 6px 6px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.koch-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.koch-actions span { flex: 1 1 100%; font-weight: 400; }
+.koch-zoom-controls button {
+  border: 2px solid currentColor;
+  background: transparent;
+  color: var(--page-accent);
+  font: inherit;
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+#koch-zoom-value { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+.digital-playground-grid > .digital-playground.koch-playground.is-enlarged {
+  grid-column: 1 / -1;
+  aspect-ratio: auto;
+  height: min(85svh, 900px);
+  min-height: 450px;
+}
+.koch-playground.is-enlarged .koch-snowflake { min-height: 260px; }
+
+.koch-controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.koch-snowflake {
+  display: block;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  color: var(--page-accent);
+}
+
+#koch-stage {
+  width: 100%;
+  min-height: 32px;
+  margin: 0;
+  accent-color: var(--page-accent);
+  cursor: pointer;
+}
+
 .digital-playground-grid .digital-playground {
   min-height: clamp(230px, 28vw, 380px);
   margin-top: 0;
@@ -761,14 +978,8 @@ h1 > .word {
   transition: color 100ms ease;
 }
 
-.digital-works-page .weather-sound-project:hover h3,
-.digital-works-page .weather-sound-project:active h3,
-.digital-works-page .weather-sound-project:focus-within h3,
-.digital-works-page .weather-sound-project.is-accented h3,
-.digital-works-page .digital-playground-project:hover h3,
-.digital-works-page .digital-playground-project:active h3,
-.digital-works-page .digital-playground-project:focus-within h3,
-.digital-works-page .digital-playground-project.is-accented h3 {
+.digital-works-page .weather-sound-project h3:hover,
+.digital-works-page .digital-playground-project h3:hover {
   color: var(--page-accent);
 }
 
@@ -964,8 +1175,7 @@ h1 > .word {
 
 .audiovisual-page .project-note-link:hover,
 .audiovisual-page .project-note-link:focus-visible,
-.audiovisual-page .project-note-link.is-discovered,
-.audiovisual-page .project-title-link.is-discovered {
+.audiovisual-page .project-note-link.is-discovered {
   color: var(--page-accent);
 }
 
@@ -1047,22 +1257,31 @@ h1 > .word {
 .about-page,
 .music-page,
 .sound-games-page {
-  --about-accent: #c38de3;
+  --about-accent: #ace8e7;
   --about-frame-gutter: clamp(20px, 2.7vw, 40px);
   --about-frame-max: 1400px;
 }
 
 .about-page {
-  --page-accent: #c38de3;
-  --about-link-discovered: #c38de3;
+  --page-accent: #ace8e7;
+  --about-link-discovered: #ace8e7;
 }
 
 .digital-works-page {
-  --page-accent: #ace8e7;
+  --page-accent: #9673b5;
+  --link-hover-color: var(--page-accent);
+  --about-accent: var(--page-accent);
+}
+
+.digital-works-page .systems-word:hover,
+.digital-works-page a:is(:hover, :focus-visible, .is-discovered),
+.digital-works-page h3:hover {
+  color: var(--page-accent);
 }
 
 .audiovisual-page {
   --page-accent: #e45de3;
+  --link-hover-color: var(--page-accent);
 }
 
 .music-page {
@@ -1382,6 +1601,42 @@ h1 > .word {
   text-decoration: none;
 }
 
+.about-copy {
+  --about-link-discovered: #ace8e7;
+  --link-hover-color: #ace8e7;
+}
+
+.about-copy a.keyword,
+.about-copy a.future-link {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  transition: color 100ms ease;
+}
+
+.about-copy a.is-discovered {
+  color: var(--about-link-discovered);
+}
+
+.about-copy a[data-link-effect="box"]::before {
+  content: "";
+  position: absolute;
+  inset: -0.12em -0.18em;
+  border: 3px solid var(--about-link-discovered);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.about-copy a[data-link-effect="box"]:is(:hover, :focus-visible)::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-copy a[data-link-effect],
+  .about-copy a[data-link-effect]::before {
+    transition: none;
+  }
+}
 .future-link {
   color: #111111;
   text-decoration-line: none;
@@ -1392,13 +1647,13 @@ h1 > .word {
 }
 
 .future-link.is-visited {
-  color: var(--about-link-discovered, #c38de3);
+  color: var(--about-link-discovered, #ace8e7);
   text-decoration-line: none;
 }
 
 .future-link:hover,
 .future-link:focus-visible {
-  color: var(--about-link-discovered, #c38de3);
+  color: var(--about-link-discovered, #ace8e7);
   text-decoration-line: none;
 }
 
@@ -1414,7 +1669,7 @@ h1 > .word {
 .keyword:hover,
 .keyword.is-discovered,
 .keyword:focus-visible {
-  color: var(--about-link-discovered, #c38de3);
+  color: var(--about-link-discovered, #ace8e7);
 }
 
 .keyword:focus-visible {
@@ -1512,6 +1767,7 @@ h1 > .word {
 
 .contact-press-page {
   --page-accent: #b8d4d3;
+  --link-hover-color: var(--page-accent);
 }
 
 .contact-press-layout {
@@ -2100,7 +2356,7 @@ a.contact-detail:focus-visible,
 /* CV */
 
 .cv-page {
-  --page-accent: #c38de3;
+  --page-accent: #ace8e7;
   overflow-x: hidden;
 }
 
@@ -2445,7 +2701,7 @@ a.contact-detail:focus-visible,
 }
 
 .about-cv {
-  --page-accent: #c38de3;
+  --page-accent: #ace8e7;
   width: var(--site-content-width);
   margin-top: clamp(38px, 4.5vw, 62px);
 }
@@ -2754,5 +3010,34 @@ a[href]:not(.main-nav a):not(.video-link):not(.project-media-link):not(.artwork-
 
   .cv-role {
     font-size: 16pt;
+  }
+}
+
+.about-page .about-copy .about-word:hover {
+  color: #ace8e7;
+}
+
+/* Match the CV card borders without shifting link layout or changing colours. */
+:root body p a[href].is-colour-discovered,
+:root body p a[href].is-colour-discovered:is(:hover, :focus-visible) {
+  color: var(--page-accent, var(--link-hover-color));
+}
+
+@media screen {
+  :root body p a[href]:not(:has(img, svg, video)) {
+    display: inline-block;
+    line-height: 1.05;
+    border: 3px solid transparent;
+    margin-inline: -3px;
+    vertical-align: baseline;
+  }
+
+  :root body p a[href]:not(:has(img, svg, video)):is(:hover, :focus-visible) {
+    border-color: currentColor;
+    outline: none;
+  }
+
+  .about-copy a[data-link-effect="box"]::before {
+    display: none;
   }
 }
