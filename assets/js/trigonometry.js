@@ -40,9 +40,9 @@
     const half = (cycleAngle === 0 && degrees !== 0 ? Math.PI * 2 : cycleAngle * Math.PI / 180) / 2;
     diagram.querySelector('.trig-angle-arc').setAttribute('d', degrees === 0 ? '' :
       `M0.25 0A0.25 0.25 0 0 0 ${0.25 * Math.cos(half)} ${-0.25 * Math.sin(half)}A0.25 0.25 0 0 0 ${0.25 * x} ${0.25 * y}`);
-    const format = value => (Math.abs(value) < 0.0005 ? 0 : value).toFixed(3);
-    document.querySelector('#trig-values').textContent = `${degrees}° · sin ${format(-y)} · cos ${format(x)}`;
-    diagram.setAttribute('aria-label', `Angle ${degrees} degrees; sine ${format(-y)}; cosine ${format(x)}`);
+    const format = value => (Math.abs(value) < 0.005 ? 0 : value).toFixed(2);
+    document.querySelector('#trig-values').textContent = `${format(degrees)}° · sin ${format(-y)} · cos ${format(x)}`;
+    diagram.setAttribute('aria-label', `Angle ${format(degrees)} degrees; sine ${format(-y)}; cosine ${format(x)}`);
   };
   const pause = () => {
     running = false;
